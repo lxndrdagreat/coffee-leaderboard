@@ -1,0 +1,50 @@
+<html>
+<head>
+	<link rel="stylesheet" href="http://dev.danielsalexander.com/coffee/static/styles.css"/>
+</head>
+<body>
+	<div class="leaderboard__section header">
+		<h2>Coffee Leaderboards</h2>
+	</div>
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">Today</h3>
+		{% for entry in leaderboard.today %}
+			<div class="leaderboard__row">
+				<span class="number">{{entry.total}}</span>
+				<span class="user">{{entry.user}}</span>
+			</div>
+		{% endfor %}
+	</div>
+
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">This Week</h3>
+		{% for entry in leaderboard.week %}
+			<div class="leaderboard__row">
+				<span class="number">{{entry.total}}</span>
+				<span class="user">{{entry.user}}</span>
+			</div>
+		{% endfor %}
+	</div>
+
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">All Time</h3>
+		{% for stat in leaderboard.totals %}
+			<div class="leaderboard__row">
+				<span class="number">{{stat.total}}</span>
+				<span class="user">{{stat.user}}</span>
+			</div>
+		{% endfor %}
+	</div>
+
+
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
+		{% for weekday in leaderboard.daystats %}
+		<div class="leaderboard__row">
+			<span class="number">{{weekday.count}}</span>
+			<span class="user">{{weekday.day}}</span>
+		</div>
+		{% endfor %}
+	</div>
+</body>
+</html>

@@ -55,7 +55,7 @@ def add():
         "channel_name": channel_name
     }
 
-    if "--yesterday" in text:
+    if "--yesterday" in text or '-y' in text:
         stat['date'] = datetime.datetime.utcnow() - datetime.timedelta(days=1)
 
     db.log.insert_one(stat)

@@ -55,8 +55,20 @@ def add():
         "channel_name": channel_name
     }
 
-    if "--yesterday" in text or '-y' in text:
-        stat['date'] = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+    split_text = text.split(' ')
+    index = None
+
+    if "--yesterday" in split_text:
+        index = split_text.index('--yesterday')
+    elif '-y' in split_text:
+        index = split_text.index('-y')
+
+    if index is not None:
+        try:
+            offset = int(split_text[index + 1])
+        except (IndexError, ValueError):
+            offset = 1
+        stat['date'] -= datetime.timedelta(days=offset)
 
     db.log.insert_one(stat)
 
@@ -73,9 +85,9 @@ def add():
 
 @app.route('/', methods=['GET'])
 def index():
-"""
+    """
     Main and only page is the leaderboard itself.
-"""
+    """
     leaderboard = {
         "totals": [],
         "today": [],

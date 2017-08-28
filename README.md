@@ -11,6 +11,7 @@ are viewable via a leaderboard on the site's single page.
 - Python 3 (probably works in 2.7)
 - MongoDB database and pymongo
 - Flask
+- pygal
 
 # Slack Setup
 

@@ -5,6 +5,7 @@ import json
 from pymongo import MongoClient
 import datetime
 import operator
+import pygal
 
 slack_api_token = "YOUR-SLACK-API-TOKEN-GOES-HERE"
 slack_api_url = "https://slack.com/api/chat.postMessage"
@@ -159,14 +160,24 @@ def index():
         'Sunday': int(day_stats_totals[6] / len(day_stats[6])) if len(day_stats[6]) > 0 else 0,
     }
 
+    average_chart = pygal.HorizontalBar()
+    average_chart.add('Monday', temp['Monday'])
+    average_chart.add('Tuesday', temp['Tuesday'])
+    average_chart.add('Wednesday', temp['Wednesday'])
+    average_chart.add('Thursday', temp['Thursday'])
+    average_chart.add('Friday', temp['Friday'])
+    average_chart.add('Saturday', temp['Saturday'])
+    average_chart.add('Sunday', temp['Sunday'])
+    average_chart_output = average_chart.render(disable_xml_declaration=True)
+
     temp = sorted(temp.items(), key=operator.itemgetter(1))
     temp = reversed(temp)
     leaderboard['daystats'] = []
     for item in temp:
         leaderboard['daystats'].append({'day':item[0],'count':item[1]})
 
-    return render_template("index.html", leaderboard=leaderboard)
+    return render_template("index.html", leaderboard=leaderboard, average_chart=average_chart_output)
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=4444)
+    app.run(host='127.0.0.1', port=4444, debug=True)

@@ -37,15 +37,9 @@
 		{% endfor %}
 	</div>
 
-
 	<div class="leaderboard__section">
 		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
-		{% for weekday in leaderboard.daystats %}
-		<div class="leaderboard__row">
-			<span class="number">{{weekday.count}}</span>
-			<span class="user">{{weekday.day}}</span>
-		</div>
-		{% endfor %}
+		{{ average_chart|safe }}
 	</div>
 </body>
 </html>

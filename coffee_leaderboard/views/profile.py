@@ -33,13 +33,15 @@ def user_profile(user_slug):
     user = UserProfile.find_one({'username': user_slug})
 
     if not user:
-      # test creation
-      # TODO remove this test!
-      user = UserProfile()
-      user.username = user_slug
-      print(f'PRE-SAVE: {user.as_dict()}')        
-      user.save()
-      print(f'POST-SAVE: {user.as_dict()}')
+        # test creation
+        # TODO remove this test!
+        if len(CoffeeEntry.find({'user': user_slug})) > 0:
+            # User has entries, so create profile object
+            user = UserProfile()
+            user.username = user_slug          
+            user.save()
+            # redirect to recalc page
+            return redirect(f'/profile/{user_slug}/recalc')
 
     if not user:
         return redirect('/')
@@ -90,7 +92,12 @@ def user_profile(user_slug):
         }], formatter=amount_formatter)
     xp_gauge = gauge.render(disable_xml_declaration=True)
 
-    return render_template('profile/index.html', user=user, entries=entries, day_chart=day_chart, xp_gauge=xp_gauge)
+    return render_template('profile/index.html', 
+                           user=user,
+                           entries=entries,
+                           day_chart=day_chart,
+                           xp_gauge=xp_gauge,
+                           is_owner=False)
 
 
 @mod.route('/<user_slug>/recalc')

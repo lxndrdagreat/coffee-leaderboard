@@ -26,6 +26,16 @@
 		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
 		{{ day_chart|safe }}
 	</div>
+
+	{% if is_owner %}
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">Admin</h3>
+		<p>
+			<em>You own this profile.</em>
+		</p>
+	</div>
+	{% endif %}
+
 	{% endif %}
 </body>
 </html>

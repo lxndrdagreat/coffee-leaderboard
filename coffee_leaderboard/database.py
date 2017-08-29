@@ -17,7 +17,7 @@ class BaseModel:
     __requiredfields__ = ()
 
     @classmethod
-    def find(cls, query):
+    def find(cls, query={}):
         collection = db[cls.__collection__]
 
         return list(map(lambda x: cls(x), [entry for entry in collection.find(query)]))

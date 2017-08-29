@@ -7,9 +7,11 @@ import json
 import datetime
 import operator
 import pygal
-from coffee_leaderboard.database import db
+from coffee_leaderboard.database import UserProfile, CoffeeEntry
+
 
 mod = Blueprint('leaderboard', __name__)
+
 
 @mod.route('/')
 def leaderboard(methods=['GET', 'POST']):
@@ -22,12 +24,12 @@ def leaderboard(methods=['GET', 'POST']):
             "today": [],
             "week": []
         }        
-        cursor = db.log.find()
+        log_entries = CoffeeEntry.find()
         lead_total = {}
-        for entry in cursor:
-            if not entry['user'] in lead_total:
-                lead_total[entry['user']] = 0
-            lead_total[entry['user']] += 1
+        for entry in log_entries:
+            if not entry.user in lead_total:
+                lead_total[entry.user] = 0
+            lead_total[entry.user] += 1
         temp = sorted(lead_total.items(), key=operator.itemgetter(1))
         temp = reversed(temp)
         for item in temp:
@@ -35,13 +37,13 @@ def leaderboard(methods=['GET', 'POST']):
 
         # get today's stats
         this_morning = datetime.datetime.now().replace(hour=0, minute=0, second=0)
-        cursor = db.log.find({'date':{'$gte':this_morning}})
+        log_entries = CoffeeEntry.find({'date':{'$gte':this_morning}})
 
         lead_today = {}
-        for entry in cursor:
-            if not entry['user'] in lead_today:
-                lead_today[entry['user']] = 0
-            lead_today[entry['user']] += 1
+        for entry in log_entries:
+            if not entry.user in lead_today:
+                lead_today[entry.user] = 0
+            lead_today[entry.user] += 1
         temp = sorted(lead_today.items(), key=operator.itemgetter(1))
         temp = reversed(temp)
         for item in temp:
@@ -51,12 +53,12 @@ def leaderboard(methods=['GET', 'POST']):
         day_today = datetime.datetime.today()
         week_start = day_today - datetime.timedelta(days = day_today.weekday())
         week_start = week_start.replace(hour=0, minute=0)
-        cursor = db.log.find({'date':{'$gte':week_start}})
+        log_entries = CoffeeEntry.find({'date':{'$gte':week_start}})
         lead_week = {}
-        for entry in cursor:
-            if not entry['user'] in lead_week:
-                lead_week[entry['user']] = 0
-            lead_week[entry['user']] += 1
+        for entry in log_entries:
+            if not entry.user in lead_week:
+                lead_week[entry.user] = 0
+            lead_week[entry.user] += 1
 
         temp = sorted(lead_week.items(), key=operator.itemgetter(1))
         temp = reversed(temp)
@@ -65,13 +67,13 @@ def leaderboard(methods=['GET', 'POST']):
             leaderboard['week'].append({'user': item[0], 'total':item[1]})
 
         # coffee by day breakdown        
-        cursor = db.log.find({})
+        log_entries = CoffeeEntry.find()
         day_stats = [{},{},{},{},{},{},{}]
         day_stats_totals = [0, 0, 0, 0, 0, 0, 0]
-        for entry in cursor:
+        for entry in log_entries:
             # get the date from the datetime as a string
-            dt = entry['date'].date().isoformat()
-            weekday = entry['date'].weekday()
+            dt = entry.date.date().isoformat()
+            weekday = entry.date.weekday()
             if not dt in day_stats[weekday]:
                 day_stats[weekday][dt] = 0
 

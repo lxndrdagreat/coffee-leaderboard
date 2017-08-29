@@ -4,8 +4,10 @@
 	<title>Coffee Leaderboard | Profile</title>
 </head>
 <body>
+	{% if user %}
 	<div class="leaderboard__section header">
-		<h2><a href="/" title="back to leaderboard">Coffee Leaderboard</a> | Profile | {{ username }}</h2>
+		<h2><a href="/" title="back to leaderboard">Coffee Leaderboard</a> | Profile | {{ user.username }}</h2>
 	</div>	
+	{% endif %}
 </body>
 </html>

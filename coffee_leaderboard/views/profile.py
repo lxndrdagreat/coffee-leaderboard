@@ -7,48 +7,120 @@ import json
 import datetime
 import operator
 import pygal
-from coffee_leaderboard.database import UserProfile
+from coffee_leaderboard.database import UserProfile, CoffeeEntry
+from coffee_leaderboard.utils import XP_TABLE, calculate_xp_history, calculate_user_level
+
 
 mod = Blueprint('profile', __name__)
 
 
 @mod.route('/')
 def profile_redirect():
-	# return redirect('/')
-	# TODO: temporary. remove this
-	do_wipe = request.values.get('wipe', 0, type=int)
-	print(f'do_wipe: {do_wipe}')
-	if do_wipe == 1:
-		result = UserProfile.wipe()
-		return 'wipe complete'
+    # return redirect('/')
+    # TODO: temporary. remove this
+    do_wipe = request.values.get('wipe', 0, type=int)
+    
+    if do_wipe == 1:
+        result = UserProfile.wipe()
+        return 'wipe complete'
 
-	all_users = list(map(lambda x: x.as_dict(), [user for user in UserProfile.find({})]))
-	return json.dumps(all_users)
+    all_users = list(map(lambda x: x.as_dict(), [user for user in UserProfile.find({})]))
+    return json.dumps(all_users)
 
 
 @mod.route('/<user_slug>')
 def user_profile(user_slug):
-	user = UserProfile.find_one({'username': user_slug})
+    user = UserProfile.find_one({'username': user_slug})
 
-	# if not user:
-	# 	# test creation
-	# 	# TODO remove this test!
-	# 	user = UserProfile()
-	# 	user.username = user_slug
-	# 	print(f'PRE-SAVE: {user.as_dict()}')		
-	# 	user.save()
-	# 	print(f'POST-SAVE: {user.as_dict()}')
+    if not user:
+      # test creation
+      # TODO remove this test!
+      user = UserProfile()
+      user.username = user_slug
+      print(f'PRE-SAVE: {user.as_dict()}')        
+      user.save()
+      print(f'POST-SAVE: {user.as_dict()}')
 
-	return render_template('profile/index.html', user=user)
+    if not user:
+        return redirect('/')
+
+    entries = CoffeeEntry.find({'user': user.username})
+
+    # get average day consumption
+    day_stats = [{},{},{},{},{},{},{}]
+    day_stats_totals = [0, 0, 0, 0, 0, 0, 0]
+    for entry in entries:
+        # get the date from the datetime as a string
+        dt = entry.date.date().isoformat()
+        weekday = entry.date.weekday()
+        if not dt in day_stats[weekday]:
+            day_stats[weekday][dt] = 0
+
+        day_stats[weekday][dt] += 1
+        day_stats_totals[weekday] += 1
+
+    temp = {
+        'Monday': int(day_stats_totals[0] / len(day_stats[0])) if len(day_stats[0]) > 0 else 0,
+        'Tuesday': int(day_stats_totals[1] / len(day_stats[1])) if len(day_stats[1]) > 0 else 0,
+        'Wednesday': int(day_stats_totals[2] / len(day_stats[2])) if len(day_stats[2]) > 0 else 0,
+        'Thursday': int(day_stats_totals[3] / len(day_stats[3])) if len(day_stats[3]) > 0 else 0,
+        'Friday': int(day_stats_totals[4] / len(day_stats[4])) if len(day_stats[4]) > 0 else 0,
+        'Saturday': int(day_stats_totals[5] / len(day_stats[5])) if len(day_stats[5]) > 0 else 0,
+        'Sunday': int(day_stats_totals[6] / len(day_stats[6])) if len(day_stats[6]) > 0 else 0,
+    }
+
+    # make the chart
+    average_chart = pygal.HorizontalBar()
+    average_chart.add('Monday', temp['Monday'])
+    average_chart.add('Tuesday', temp['Tuesday'])
+    average_chart.add('Wednesday', temp['Wednesday'])
+    average_chart.add('Thursday', temp['Thursday'])
+    average_chart.add('Friday', temp['Friday'])
+    average_chart.add('Saturday', temp['Saturday'])
+    average_chart.add('Sunday', temp['Sunday'])
+    day_chart = average_chart.render(disable_xml_declaration=True)
+
+    # Experience Gauge Chart
+    calculated = calculate_user_level(user.experience, XP_TABLE)
+    gauge = pygal.SolidGauge(inner_radius=0.70, half_pie = True, show_legend=False)
+    amount_formatter = lambda x: f'{x} XP'
+    gauge.add('Experience', [{
+        'value': calculated['current'],
+        'max_value': XP_TABLE[calculated['level'] - 1]
+        }], formatter=amount_formatter)
+    xp_gauge = gauge.render(disable_xml_declaration=True)
+
+    return render_template('profile/index.html', user=user, entries=entries, day_chart=day_chart, xp_gauge=xp_gauge)
+
+
+@mod.route('/<user_slug>/recalc')
+def user_profile_recalculate(user_slug):
+    """Forces a recalculation of the user's experience, level, etc."""
+    user = UserProfile.find_one({'username': user_slug})
+    if not user:
+        return redirect('/')
+
+    user_entries = CoffeeEntry.find({'user': user.username})
+
+    total_user_xp = calculate_xp_history(user_entries)
+    user_current_stats = calculate_user_level(total_user_xp, XP_TABLE)
+    print(user_current_stats)
+    user.experience = total_user_xp
+    user.level = user_current_stats['level']
+    user.prestige = user_current_stats['prestige']
+    user.save()
+
+    return redirect(f'/profile/{user.username}')
+
 
 # TODO: remove?
 @mod.route('/<user_slug>/delete')
 def user_profile_delete(user_slug):
-	user = UserProfile.find_one({'username': user_slug})
+    user = UserProfile.find_one({'username': user_slug})
 
-	if not user:
-		return 'No user to delete'
+    if not user:
+        return 'No user to delete'
 
-	result = user.delete()
+    result = user.delete()
 
-	return result
+    return result

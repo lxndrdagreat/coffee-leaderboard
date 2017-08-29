@@ -7,7 +7,25 @@
 	{% if user %}
 	<div class="leaderboard__section header">
 		<h2><a href="/" title="back to leaderboard">Coffee Leaderboard</a> | Profile | {{ user.username }}</h2>
-	</div>	
+	</div>
+
+	<!-- +XP Stats -->
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">
+			{% if user.prestige > 0 %}
+			Prestige {{user.prestige}} 
+			{% endif %}
+			Level {{user.level}}
+			
+		</h3>
+		{{ xp_gauge|safe}}
+	</div>
+
+	<!-- Consumption Averages -->
+	<div class="leaderboard__section">
+		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
+		{{ day_chart|safe }}
+	</div>
 	{% endif %}
 </body>
 </html>

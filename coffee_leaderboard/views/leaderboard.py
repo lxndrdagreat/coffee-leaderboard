@@ -23,54 +23,46 @@ def leaderboard():
             "totals": [],
             "today": [],
             "week": []
-        }        
-        log_entries = CoffeeEntry.find()
+        }
+
+        # overall
         lead_total = {}
-        for entry in log_entries:
-            if not entry.user in lead_total:
-                lead_total[entry.user] = 0
-            lead_total[entry.user] += 1
-        temp = sorted(lead_total.items(), key=operator.itemgetter(1))
-        temp = reversed(temp)
-        for item in temp:
-            leaderboard['totals'].append({'user':item[0],'total':item[1]})
 
-        # get today's stats
+        # for today's stats
         this_morning = datetime.datetime.now().replace(hour=0, minute=0, second=0)
-        log_entries = CoffeeEntry.find({'date':{'$gte':this_morning}})
-
         lead_today = {}
-        for entry in log_entries:
-            if not entry.user in lead_today:
-                lead_today[entry.user] = 0
-            lead_today[entry.user] += 1
-        temp = sorted(lead_today.items(), key=operator.itemgetter(1))
-        temp = reversed(temp)
-        for item in temp:
-            leaderboard['today'].append({'user':item[0],'total':item[1]})       
 
-        # get week stats
+        # for this week's stats
         day_today = datetime.datetime.today()
         week_start = day_today - datetime.timedelta(days = day_today.weekday())
         week_start = week_start.replace(hour=0, minute=0)
-        log_entries = CoffeeEntry.find({'date':{'$gte':week_start}})
         lead_week = {}
-        for entry in log_entries:
-            if not entry.user in lead_week:
-                lead_week[entry.user] = 0
-            lead_week[entry.user] += 1
-
-        temp = sorted(lead_week.items(), key=operator.itemgetter(1))
-        temp = reversed(temp)
-
-        for item in temp:
-            leaderboard['week'].append({'user': item[0], 'total':item[1]})
 
         # coffee by day breakdown        
-        log_entries = CoffeeEntry.find()
         day_stats = [{},{},{},{},{},{},{}]
         day_stats_totals = [0, 0, 0, 0, 0, 0, 0]
+
+        # get log
+        log_entries = CoffeeEntry.find()
+        
         for entry in log_entries:
+            # overall
+            if not entry.user in lead_total:
+                lead_total[entry.user] = 0
+            lead_total[entry.user] += 1
+
+            # today
+            if entry.date >= this_morning:
+                if not entry.user in lead_today:
+                    lead_today[entry.user] = 0
+                lead_today[entry.user] += 1
+
+            # this week
+            if entry.date >= week_start:
+                if not entry.user in lead_week:
+                    lead_week[entry.user] = 0
+                lead_week[entry.user] += 1
+
             # get the date from the datetime as a string
             dt = entry.date.date().isoformat()
             weekday = entry.date.weekday()
@@ -80,6 +72,25 @@ def leaderboard():
             day_stats[weekday][dt] += 1
             day_stats_totals[weekday] += 1
 
+        # sort overall stats
+        temp = sorted(lead_total.items(), key=operator.itemgetter(1))
+        temp = reversed(temp)
+        for item in temp:
+            leaderboard['totals'].append({'user':item[0],'total':item[1]})
+        
+        # sort today's stats
+        temp = sorted(lead_today.items(), key=operator.itemgetter(1))
+        temp = reversed(temp)
+        for item in temp:
+            leaderboard['today'].append({'user':item[0],'total':item[1]})                    
+    
+        # sort week's stats
+        temp = sorted(lead_week.items(), key=operator.itemgetter(1))
+        temp = reversed(temp)
+        for item in temp:
+            leaderboard['week'].append({'user': item[0], 'total':item[1]})
+                
+        # setup day average stats
         temp = {
             'Monday': int(day_stats_totals[0] / len(day_stats[0])) if len(day_stats[0]) > 0 else 0,
             'Tuesday': int(day_stats_totals[1] / len(day_stats[1])) if len(day_stats[1]) > 0 else 0,
@@ -90,6 +101,7 @@ def leaderboard():
             'Sunday': int(day_stats_totals[6] / len(day_stats[6])) if len(day_stats[6]) > 0 else 0,
         }
 
+        # create chart for day average stats
         average_chart = pygal.HorizontalBar()
         average_chart.add('Monday', temp['Monday'])
         average_chart.add('Tuesday', temp['Tuesday'])
@@ -100,6 +112,7 @@ def leaderboard():
         average_chart.add('Sunday', temp['Sunday'])
         average_chart_output = average_chart.render(disable_xml_declaration=True)
 
+        # sort day average stats
         temp = sorted(temp.items(), key=operator.itemgetter(1))
         temp = reversed(temp)
         leaderboard['daystats'] = []

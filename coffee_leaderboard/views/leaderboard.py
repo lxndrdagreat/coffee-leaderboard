@@ -1,20 +1,20 @@
 # coffee-leaderboard/views/leaderboard.py
 
-from flask import Blueprint, render_template, request
-import requests
+from flask import Blueprint, render_template, request, abort
 import random
 import json
 import datetime
 import operator
 import pygal
 from coffee_leaderboard.database import UserProfile, CoffeeEntry
+from coffee_leaderboard import app
 
 
 mod = Blueprint('leaderboard', __name__)
 
 
-@mod.route('/')
-def leaderboard(methods=['GET', 'POST']):
+@mod.route('/', methods=['GET', 'POST'])
+def leaderboard():
     """Primary leaderboard view."""
 
     if request.method == 'GET':
@@ -109,28 +109,27 @@ def leaderboard(methods=['GET', 'POST']):
         return render_template("leaderboard/index.html", leaderboard=leaderboard, average_chart=average_chart_output)
 
     else:
-        user_id = None
-        user_name = None
-        text = None
-        channel_name = None
-        channel_id = None
+        token = request.form.get('token', None)
 
         # Lock down requests so your Slack is the only sender accepted
-        if request.form.get('token') is None:
-            return
+        if token is None or token != app.config['SLACK_API_TOKEN']:
+            abort(403)
 
-        user_name = request.form.get('user_name')
-        text = request.form.get('text')
-        channel_name = request.form.get('channel_name')
-        channel_id = request.form.get('channel_id')
+        user_name = request.form.get('user_name', None)
+        text = request.form.get('text', None)
+        channel_name = request.form.get('channel_name', None)
+        channel_id = request.form.get('channel_id', None)
 
-        stat = {
-            "user": user_name,
-            "text": text,
-            "date": datetime.datetime.utcnow(),
-            "channel_id": channel_id,
-            "channel_name": channel_name
-        }
+        # require all fields
+        if not user_name or not text or not channel_id or not channel_name:
+            abort(400) # bad request
+
+        entry = CoffeeEntry()
+        entry.user = user_name
+        entry.text = text
+        entry.date = datetime.datetime.utcnow()
+        entry.channel_name = channel_name
+        entry.channel_id = channel_id
 
         split_text = text.split(' ')
         index = None
@@ -145,16 +144,8 @@ def leaderboard(methods=['GET', 'POST']):
                 offset = int(split_text[index + 1])
             except (IndexError, ValueError):
                 offset = 1
-            stat['date'] -= datetime.timedelta(days=offset)
+            entry.date -= datetime.timedelta(days=offset)
 
-        db.log.insert_one(stat)
+        entry.save()
 
-        user_total = db.stats.find_one({'user': user_name})
-        usr = {
-            'user': user_name,
-            'total': user_total['total'] + 1 if user_total is not None else 1
-        }
-
-        db.stats.update({'user':user_name}, usr, True)
-
-        return
+        return ''

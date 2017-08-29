@@ -95,3 +95,25 @@ def calculate_user_level(total_xp, xp_table):
         'current': remaining,
         'prestige': prestige
     }
+
+
+def calculate_new_entry_xp(entry, user_entries):
+    """Returns the XP earned for a new entry."""
+    day_streak_bonus = 5
+    score = 100
+    was_late_entry = '-y' in entry.text or '--yesterday' in entry.text
+    late_modifier = 0.25 if was_late_entry else 1.0
+    score = int(score * late_modifier)
+    # late entries don't get any bonuses
+    if not was_late_entry:
+        cups_today = [en for en in user_entries if entry.date.date() == en.date.date()]
+        cups_today = sorted(cups_today, key=lambda en: en.date)
+        was_first_of_date = len(cups_today) == 0 or entry == cups_today[0]
+        if was_first_of_date:
+            score += 10
+
+            day_streak = calculate_streak_bonus(entry.date, user_entries)
+            streak_bonus = day_streak * day_streak_bonus
+            score += streak_bonus    
+
+    return score

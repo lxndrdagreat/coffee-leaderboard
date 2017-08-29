@@ -8,7 +8,7 @@ import operator
 import pygal
 from coffee_leaderboard.database import UserProfile, CoffeeEntry
 from coffee_leaderboard import app
-
+from coffee_leaderboard.utils import calculate_new_entry_xp
 
 mod = Blueprint('leaderboard', __name__)
 
@@ -158,6 +158,16 @@ def leaderboard():
             except (IndexError, ValueError):
                 offset = 1
             entry.date -= datetime.timedelta(days=offset)
+
+        # If user profile exists, handle +XP
+        user = UserProfile.find_one({'username': user_name})
+        if user:
+            # get user's entries from the last 8 days (db limit to speed up requests)
+            week_ago = entry.date - datetime.timedelta(days=8)
+            user_entries = CoffeeEntry.find({'user': user.username, 'date': {'$gte': week_ago}})
+            new_xp = calculate_new_entry_xp(entry, user_entries)
+            user.experience += new_xp
+            user.save()
 
         entry.save()
 

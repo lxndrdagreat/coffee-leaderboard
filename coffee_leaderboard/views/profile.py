@@ -84,6 +84,10 @@ def user_profile(user_slug):
 
     # Experience Gauge Chart
     calculated = calculate_user_level(user.experience, XP_TABLE)
+    if user.level != calculated['level']:
+        user.level = calculated['level']
+        user.prestige = calculated['prestige']
+        user.save()
     gauge = pygal.SolidGauge(inner_radius=0.70, half_pie = True, show_legend=False)
     amount_formatter = lambda x: f'{x} XP'
     gauge.add('Experience', [{

@@ -87,28 +87,20 @@
         <strong>Experience Table</strong>
         </p>
         <p>
-<pre>
-       2: 700
-       3: 1295
-       4: 2230
-       5: 3599
-       6: 5477
-       7: 7907
-       8: 10889
-       9: 14379
-      10: 18297
-      11: 22534
-      12: 26970
-      13: 31483
-      14: 35961
-      15: 40308
-      16: 44450
-      17: 48332
-      18: 51920
-      19: 55196
-      20: 58157
-Prestige: 60808
-</pre>
+        <table class="xp-table">
+            <tbody>
+                    <tr>
+                        <th>Level</th>
+                        <th>XP Needed</th>
+                    </tr>
+                {% for row in xp_table %}
+                    <tr>
+                        <td>{% if loop.index != 20 %}{{loop.index+1}}{% else %}Prestige{% endif %}</td>
+                        <td>{{row}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         </p>
     </div>
     <div class="leaderboard__section">

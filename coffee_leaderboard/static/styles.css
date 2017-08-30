@@ -90,3 +90,34 @@ h2 {
 .header{
 	margin: 1em 0 2em;
 }
+
+.xp-table {
+	width: 100%;
+	max-width: 15rem;
+	border: 1px solid #333;
+	border-radius: 3px;
+	margin: 0 auto;	
+	border-spacing: 0;	
+	box-sizing: border-box;
+}
+
+.xp-table th {
+	padding: 0.5rem 0;
+}
+
+.xp-table tr {
+	background-color: #ddd;
+}
+
+.xp-table tr:nth-child(odd) {
+	background-color: #eee;
+}
+
+.xp-table td {
+	text-align: right;
+	padding: 0.25rem 0.5rem;
+}
+
+.xp-table td:first-child {
+	font-weight: bold;
+}

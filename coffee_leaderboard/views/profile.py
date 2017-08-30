@@ -93,12 +93,6 @@ def user_profile(user_slug):
     xp_total_amount_this_level = xp_next - xp_start
     xp_progress_this_level = user.experience - xp_start
     xp_percent = 1.0 / xp_total_amount_this_level * xp_progress_this_level
-    print(f'Current XP: {user.experience}')
-    print(f'Start: {xp_start}')
-    print(f'Next: {xp_next}')
-    print(f'This Level: {xp_total_amount_this_level}')
-    print(f'Progress: {xp_progress_this_level}')
-    print(f'Percent: {xp_percent}')
 
     return render_template('profile/index.html', 
                            user=user,

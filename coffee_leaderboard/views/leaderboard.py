@@ -8,7 +8,8 @@ import operator
 import pygal
 from coffee_leaderboard.database import UserProfile, CoffeeEntry
 from coffee_leaderboard import app
-from coffee_leaderboard.utils import calculate_new_entry_xp
+from coffee_leaderboard.utils import calculate_new_entry_xp, calculate_user_level, XP_TABLE
+
 
 mod = Blueprint('leaderboard', __name__)
 
@@ -167,6 +168,13 @@ def leaderboard():
             user_entries = CoffeeEntry.find({'user': user.username, 'date': {'$gte': week_ago}})
             new_xp = calculate_new_entry_xp(entry, user_entries)
             user.experience += new_xp
+            user_prev_level = user.level
+            calculated = calculate_user_level(user.experience, XP_TABLE)
+            if calculated['level'] != user_prev_level:
+                # user leveled up!
+                user.level = calculated['level']
+                user.prestige = calculated['prestige']
+                # TODO: send message to Slack/user
             user.save()
 
         entry.save()

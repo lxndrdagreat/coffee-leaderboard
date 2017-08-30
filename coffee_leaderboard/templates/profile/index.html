@@ -1,41 +1,115 @@
 <html>
 <head>
-	<link rel="stylesheet" href="/static/styles.css"/>
-	<title>Coffee Leaderboard | Profile</title>
+    <link rel="stylesheet" href="/static/styles.css"/>
+    <title>Coffee Leaderboard | Profile</title>
+
+    <script src="/static/js/progressbar.min.js"></script>
+
+    <style>
+        .progress-container {
+          margin: 20px;
+          width: 200px;
+          height: 100px;
+          color: #333;  
+          font-weight: bold;   
+          display: inline-block;     
+        }
+    </style>
 </head>
 <body>
-	{% if user %}
-	<div class="leaderboard__section header">
-		<h2><a href="/" title="back to leaderboard">Coffee Leaderboard</a> | Profile | {{ user.username }}</h2>
-	</div>
+    {% if user %}
+    <div class="leaderboard__section header">
+        <h2><a href="/" title="back to leaderboard">Coffee Leaderboard</a> | Profile | {{ user.username }}</h2>
+    </div>
 
-	<!-- +XP Stats -->
-	<div class="leaderboard__section">
-		<h3 class="leaderboard__title">
-			{% if user.prestige > 0 %}
-			Prestige {{user.prestige}} 
-			{% endif %}
-			Level {{user.level}}
-			
-		</h3>
-		{{ xp_gauge|safe}}
-	</div>
+    <!-- +XP Stats -->
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">
+            {% if user.prestige > 0 %}
+            Prestige {{user.prestige}} 
+            {% endif %}
+            Level {{user.level}}            
+        </h3>
+        <div id="levelcontainer" class="progress-container"></div>
+        <div id="xpcontainer" class="progress-container"></div>
+    </div>
 
-	<!-- Consumption Averages -->
-	<div class="leaderboard__section">
-		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
-		{{ day_chart|safe }}
-	</div>
+    <!-- Consumption Averages -->
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
+        {{ day_chart|safe }}
+    </div>
 
-	{% if is_owner %}
-	<div class="leaderboard__section">
-		<h3 class="leaderboard__title">Admin</h3>
-		<p>
-			<em>You own this profile.</em>
-		</p>
-	</div>
-	{% endif %}
+    {% if is_owner %}
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">Admin</h3>
+        <p>
+            <em>You own this profile.</em>
+        </p>
+    </div>
+    {% endif %}
 
-	{% endif %}
+    {% endif %}
+
+    <script>
+
+        var currentXP = {{xp_current_level}};
+        var xpPercent = {{xp_percent}};
+        var xpNextLevel = {{xp_next_level}};
+        var prestige = {{user.prestige}};
+        var currentLevel = {{user.level}};
+        var levelPercent = 1.0 / 20 * currentLevel;
+
+        var XPbar = new ProgressBar.SemiCircle(xpcontainer, {
+          strokeWidth: 6,
+          // color: '#FFEA82',
+          trailColor: '#eee',
+          trailWidth: 1,
+          easing: 'easeInOut',
+          duration: 1400,
+          svgStyle: null,
+          text: {
+            value: '',
+            alignToBottom: false
+          },
+          from: {color: '#FFEA82'},
+          to: {color: '#ED6A5A'},
+          // Set default step function for all animate calls
+          step: (state, bar) => {
+            bar.path.setAttribute('stroke', state.color);
+            var value = Math.round(bar.value() * 100);
+            if (value === 0) {
+              bar.setText('');
+            } else {
+              bar.setText(currentXP + " / " + xpNextLevel + " XP");
+            }            
+          }
+        });
+
+        XPbar.animate(xpPercent);  // Number from 0.0 to 1.0
+
+        var levelBar = new ProgressBar.SemiCircle(levelcontainer, {
+          strokeWidth: 6,
+          // color: '#FFEA82',
+          trailColor: '#eee',
+          trailWidth: 1,
+          easing: 'easeInOut',
+          duration: 1400,
+          svgStyle: null,
+          text: {
+            value: '',
+            alignToBottom: false
+          },
+          from: {color: '#FFEA82'},
+          to: {color: '#ED6A5A'},
+          // Set default step function for all animate calls
+          step: (state, bar) => {
+            bar.path.setAttribute('stroke', state.color);
+            bar.setText("Level " + currentLevel + " / " + 20);          
+          }
+        });
+        levelBar.animate(levelPercent);
+
+    </script>
 </body>
 </html>

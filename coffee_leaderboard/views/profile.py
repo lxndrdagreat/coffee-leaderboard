@@ -88,19 +88,25 @@ def user_profile(user_slug):
         user.level = calculated['level']
         user.prestige = calculated['prestige']
         user.save()
-    gauge = pygal.SolidGauge(inner_radius=0.70, half_pie = True, show_legend=False)
-    amount_formatter = lambda x: f'{x} XP'
-    gauge.add('Experience', [{
-        'value': calculated['current'],
-        'max_value': XP_TABLE[calculated['level'] - 1]
-        }], formatter=amount_formatter)
-    xp_gauge = gauge.render(disable_xml_declaration=True)
+    xp_start = XP_TABLE[calculated['level'] - 2] if calculated['level'] - 2 >= 0 else 0
+    xp_next = XP_TABLE[calculated['level'] - 1]
+    xp_total_amount_this_level = xp_next - xp_start
+    xp_progress_this_level = user.experience - xp_start
+    xp_percent = 1.0 / xp_total_amount_this_level * xp_progress_this_level
+    print(f'Current XP: {user.experience}')
+    print(f'Start: {xp_start}')
+    print(f'Next: {xp_next}')
+    print(f'This Level: {xp_total_amount_this_level}')
+    print(f'Progress: {xp_progress_this_level}')
+    print(f'Percent: {xp_percent}')
 
     return render_template('profile/index.html', 
                            user=user,
                            entries=entries,
                            day_chart=day_chart,
-                           xp_gauge=xp_gauge,
+                           xp_percent=xp_percent,
+                           xp_next_level=xp_total_amount_this_level,
+                           xp_current_level=xp_progress_this_level,
                            is_owner=False)
 
 

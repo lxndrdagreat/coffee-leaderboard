@@ -16,16 +16,7 @@ mod = Blueprint('profile', __name__)
 
 @mod.route('/')
 def profile_redirect():
-    # return redirect('/')
-    # TODO: temporary. remove this
-    do_wipe = request.values.get('wipe', 0, type=int)
-    
-    if do_wipe == 1:
-        result = UserProfile.wipe()
-        return 'wipe complete'
-
-    all_users = list(map(lambda x: x.as_dict(), [user for user in UserProfile.find({})]))
-    return json.dumps(all_users)
+    return redirect('/')
 
 
 @mod.route('/<user_slug>')

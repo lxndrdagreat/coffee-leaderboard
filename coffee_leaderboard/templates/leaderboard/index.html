@@ -1,11 +1,11 @@
 <html>
 <head>
 	<link rel="stylesheet" href="/static/styles.css"/>
-	<title>Coffee Leaderboards</title>
+	<title>Coffee Leaderboard</title>
 </head>
 <body>
 	<div class="leaderboard__section header">
-		<h2>Coffee Leaderboards</h2>
+		<h2>Coffee Leaderboard</h2>
 	</div>
 	<div class="leaderboard__section">
 		<h3 class="leaderboard__title">Today</h3>
@@ -33,6 +33,7 @@
 			<div class="leaderboard__row">
 				<span class="number">{{stat.total}}</span>
 				<span class="user">{{stat.user}}</span>
+				<a class="profile-link" href="/profile/{{stat.user}}">profile</a>		
 			</div>
 		{% endfor %}
 	</div>

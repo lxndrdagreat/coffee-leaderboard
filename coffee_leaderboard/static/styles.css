@@ -24,6 +24,7 @@ h2 {
 	/*font-size: .9em;*/
 	width: 100%;
 	border-bottom: 1px dashed rgba(195,180,165,1);
+	position: relative;
 }
 
 .leaderboard__row .number{
@@ -55,6 +56,19 @@ h2 {
 }
 .user{
 	display: inline;
+}
+.leaderboard__row .profile-link {
+	font-size: .8rem;
+	/*float: right;*/	
+	position: absolute;
+	right: 0;
+	height: 50px;
+	line-height: 50px;
+	padding: 5px;
+	text-decoration: none;
+}
+.leaderboard__row .profile-link:hover {
+	text-decoration: underline;
 }
 
 .leaderboard__title {

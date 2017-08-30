@@ -9,10 +9,20 @@
         .progress-container {
           margin: 20px;
           width: 200px;
-          height: 100px;
           color: #333;  
           font-weight: bold;   
           display: inline-block;     
+        }
+        .progress-container__title {
+            text-align: center;
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+        .progress-container__bar {
+            height: 100px;
+        }
+        .right {
+            float: right;
         }
     </style>
 </head>
@@ -28,10 +38,18 @@
             {% if user.prestige > 0 %}
             Prestige {{user.prestige}} 
             {% endif %}
-            Level {{user.level}}            
+            Level {{user.level}}     
+            <span class="right">{{user.experience}} XP</span>       
         </h3>
-        <div id="levelcontainer" class="progress-container"></div>
-        <div id="xpcontainer" class="progress-container"></div>
+        <div class="progress-container">
+            <h4 class="progress-container__title">Current Level</h4>
+            <div id="levelcontainer" class="progress-container__bar"></div>
+        </div>
+        <div class="progress-container">
+            <h4 class="progress-container__title">XP to Next Level</h4>
+            <div id="xpcontainer" class="progress-container__bar"></div>
+        </div>
+
     </div>
 
     <!-- Consumption Averages -->
@@ -105,7 +123,7 @@
           // Set default step function for all animate calls
           step: (state, bar) => {
             bar.path.setAttribute('stroke', state.color);
-            bar.setText("Level " + currentLevel + " / " + 20);          
+            bar.setText(currentLevel + " / " + 20);          
           }
         });
         levelBar.animate(levelPercent);

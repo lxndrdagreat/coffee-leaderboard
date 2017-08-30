@@ -1,11 +1,11 @@
 <html>
 <head>
     <link rel="stylesheet" href="/static/styles.css"/>
-    <title>+XP | About</title>
+    <title>About +XP</title>
 </head>
 <body>
     <div class="leaderboard__section header">
-        <h2>Coffee Leaderboards | +XP | About</h2>
+        <h2><a href="/">Coffee Leaderboard</a> | About +XP</h2>
     </div>
     <div class="leaderboard__section">
         <h3 class="leaderboard__title">What is +XP?</h3>
@@ -17,7 +17,87 @@
             Now, every recorded cup of coffee grants the user experience points,
             which earn the user levels, achievements, etc.
         </p>
+        <p>
+            <strong>This is still a major work-in-progress!</strong>
+        </p>
     </div>
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">How do I Earn Experience Points?</h3>
+        <p>
+            For each recorded cup of coffee, the following experience is calculated:
+        </p>
 
+        <p>
+            <strong>Starting experience:</strong> each cup starts with a worth of <em>100</em>
+            experience points.
+        </p>
+
+        <p>
+            <strong>First cup of the day:</strong> the first cup drunk every day earns an extra
+            <em>10</em> experience points.
+        </p>
+
+        <p>
+            <strong>Day Streak Bonus:</strong> for every day in row before the recorded cup that
+            the user drank coffee, the user gains a bonus <em>5</em> experience points; the maximum
+            bonus points is <em>35</em> (7 days). <strong>Note: this bonus only applies to the first
+            cup recorded each day.</strong>
+        </p>
+
+        <p>
+            <strong>Late penalty:</strong> cups that are submitted late (via the <code>-y</code> and
+            <code>--yesterday</code> parameters) are only worth <em>25</em> experience points, and
+            do not receieve further bonuses. However, they do still count for the <em>Day Streak Bonus</em>
+            for future cup entries.
+        </p>
+    </div>
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">Example</h3>
+        <p>
+            This is the experience calculated for the first cup of the day, with a 3 day streak.
+        </p>
+        <p>
+            <pre>
+    Starting score:    100
+   First cup bonus:     10
+3 day streak bonus:     15
+                      ----
+             Total:    125
+            </pre>
+        </p>
+    </div>
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">Leveling and Prestige Levels</h3>
+        <p>
+            As the user gains experience points, he will level up. There are 20
+            levels, but after the 20th level the user can level up once more to gain
+            a <em>Prestige Level</em>. When a user gains a <em>Prestige Level</em>,
+            his current level resets to 1, and the leveling continues.
+        </p>
+        <p>
+            A user's experience points a cumulative across levels and prestige,
+            meaning it is possible to see not only what a user's current prestige and level
+            are, but also the exact number of experience points they have gained over time.
+        </p>
+        <p>
+            Now, every recorded cup of coffee grants the user experience points,
+            which earn the user levels, achievements, etc.
+        </p>
+    </div>
+    <div class="leaderboard__section">
+        <h3 class="leaderboard__title">Roadmap</h3>
+        <p>
+            The basic experience point gain and leveling system is in place, but there
+            is still more to come! Here are some planned features:
+        </p>
+
+        <p>
+            <ul>
+                <li>More experience point modifiers</li>
+                <li>Achievement system</li>
+                <li>Prestige Level proper names</li>
+            </ul>
+        </p>
+    </div>
 </body>
 </html>

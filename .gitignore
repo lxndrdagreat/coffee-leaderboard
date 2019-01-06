@@ -60,3 +60,9 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# JetBrains
+.idea/
+
+# config.py should not be included
+config.py

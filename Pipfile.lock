@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f913321974036d9f6a71503ee70d68e05dc44777a7f300683ab4dce97132822c"
+            "sha256": "685a1f9441ecd8f183dc8aa31ea0950e7104381664fbcf4ae0c6bdb9cf3565dd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,14 @@
         ]
     },
     "default": {
+        "aenum": {
+            "hashes": [
+                "sha256:3df9b84cce5dc9ed77c337079f97b66c44c0053eb87d6f4d46b888dc45801e38",
+                "sha256:7a77c205c4bc9d7fe9bd73b3193002d724aebf5909fa0d297534208953891ec8",
+                "sha256:a3208e4b28db3a7b232ff69b934aef2ea1bf27286d9978e1e597d46f490e4687"
+            ],
+            "version": "==2.1.2"
+        },
         "aiofiles": {
             "hashes": [
                 "sha256:021ea0ba314a86027c166ecc4b4c07f2d40fc0f4b3a950d1868a0f2571c2bbee",
@@ -23,6 +31,19 @@
             ],
             "index": "pypi",
             "version": "==0.4.0"
+        },
+        "aiosqlite": {
+            "hashes": [
+                "sha256:a29bf465f0c366c9495c90c1802e62828eeccf12f3d704a33b14a50851e1715f"
+            ],
+            "index": "pypi",
+            "version": "==0.8.1"
+        },
+        "ciso8601": {
+            "hashes": [
+                "sha256:01c44f93addee3cfd599ba6ae8d1b772ed642b89132e504c629feb57cc63a177"
+            ],
+            "version": "==2.1.1"
         },
         "click": {
             "hashes": [
@@ -79,12 +100,25 @@
             ],
             "version": "==1.1.0"
         },
+        "pypika": {
+            "hashes": [
+                "sha256:06c714fd133cd9ae0f63fa04f77f625a6be62513fcf8846d3c9dd4e7869fcd51"
+            ],
+            "version": "==0.19.0"
+        },
         "starlette": {
             "hashes": [
                 "sha256:01f04283b49a8cb0c8921baa90dbafe47e953f0a265f6ebb38176038e4bd9bf8"
             ],
             "index": "pypi",
             "version": "==0.9.9"
+        },
+        "tortoise-orm": {
+            "hashes": [
+                "sha256:85064feb1ab2bd0971caef009f1d0de1c757c210fcc9837f9cca44b46d3fcbff"
+            ],
+            "index": "pypi",
+            "version": "==0.11.2"
         },
         "uvicorn": {
             "hashes": [

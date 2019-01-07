@@ -11,6 +11,7 @@
 # from coffee_leaderboard.utils import calculate_new_entry_xp, calculate_user_level, XP_TABLE
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse
+from coffee_leaderboard.database.models import CoffeeEntry
 
 
 app = Starlette(template_directory='coffee_leaderboard/templates')
@@ -18,6 +19,10 @@ app = Starlette(template_directory='coffee_leaderboard/templates')
 
 @app.route('/')
 async def leaderboard(request):
+
+    # entry = CoffeeEntry(user='dan', text=':coffee:',
+    #                     channel_id='42', channel_name='my-channel')
+    # await entry.save()
 
     leaderboard = {
         'totals': [],

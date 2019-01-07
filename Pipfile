@@ -8,6 +8,8 @@ starlette = "*"
 uvicorn = "*"
 aiofiles = "*"
 "jinja2" = "*"
+tortoise-orm = "*"
+aiosqlite = "*"
 
 [dev-packages]
 

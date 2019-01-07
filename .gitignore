@@ -66,3 +66,6 @@ target/
 
 # config.py should not be included
 config.py
+
+# sqlite dev database
+*.sqlite3

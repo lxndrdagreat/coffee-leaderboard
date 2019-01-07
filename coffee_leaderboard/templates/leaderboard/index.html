@@ -9,7 +9,7 @@
 	</div>
 	<div class="leaderboard__section">
 		<h3 class="leaderboard__title">Today</h3>
-		{% for entry in leaderboard.today %}
+		{% for entry in entries_today %}
 			<div class="leaderboard__row">
 				<span class="number">{{entry.total}}</span>
 				<span class="user">{{entry.user}}</span>
@@ -19,7 +19,7 @@
 
 	<div class="leaderboard__section">
 		<h3 class="leaderboard__title">This Week</h3>
-		{% for entry in leaderboard.week %}
+		{% for entry in entries_week %}
 			<div class="leaderboard__row">
 				<span class="number">{{entry.total}}</span>
 				<span class="user">{{entry.user}}</span>
@@ -29,7 +29,7 @@
 
 	<div class="leaderboard__section">
 		<h3 class="leaderboard__title">All Time</h3>
-		{% for stat in leaderboard.totals %}
+		{% for stat in entries_total %}
 			<div class="leaderboard__row">
 				<span class="number">{{stat.total}}</span>
 				<span class="user">{{stat.user}}</span>

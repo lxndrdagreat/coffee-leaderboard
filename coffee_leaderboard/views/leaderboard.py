@@ -3,7 +3,7 @@
 # from flask import Blueprint, render_template, request, abort
 # import random
 # import json
-# import datetime
+import datetime
 # import operator
 # import pygal
 # from coffee_leaderboard.database import UserProfile, CoffeeEntry
@@ -20,17 +20,30 @@ app = Starlette(template_directory='coffee_leaderboard/templates')
 @app.route('/')
 async def leaderboard(request):
 
+    now = datetime.datetime.now()
+    now = now.replace(now.year, now.month, now.day - 1)
+    now = int(now.timestamp() * 1000)
+    this_morning = datetime.datetime.now().replace(hour=0, minute=0, second=0)
+    this_week = this_morning - datetime.timedelta(days=this_morning.weekday())
+    this_week = int(this_week.timestamp() * 1000)
     # entry = CoffeeEntry(user='dan', text=':coffee:',
+    #                     date=now,
     #                     channel_id='42', channel_name='my-channel')
     # await entry.save()
 
-    leaderboard = {
-        'totals': [],
-        'today': [],
-        'week': []
-    }
+    this_morning = int(this_morning.timestamp() * 1000)
+    # print(this_morning.timestamp())
+    # entries_today = await CoffeeEntry.filter(date__startswith=this_morning.strftime('%Y-%m-%d'))
+    entries_today = await CoffeeEntry.filter(date__gte=this_morning)
+    entries_week = await CoffeeEntry.filter(date__gte=this_week)
+    entries_total = []
+
+    # render template
     template = app.get_template('leaderboard/index.html')
-    content = template.render(request=request, leaderboard=leaderboard)
+    content = template.render(request=request,
+                              entries_today=entries_today,
+                              entries_total=entries_total,
+                              entries_week=entries_week)
     return HTMLResponse(content)
 
 

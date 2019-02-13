@@ -3,6 +3,8 @@ import operator
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse, Response
 from coffee_leaderboard.database.models import CoffeeEntry, UserProfile
+from coffee_leaderboard import settings
+
 
 app = Starlette(template_directory='coffee_leaderboard/templates')
 
@@ -68,11 +70,12 @@ async def leaderboard(request):
 @app.route('/add', methods=['POST'])
 async def add_entry(request):
     form_data: dict = await request.form()
-    token: str = form_data.get('token', None)
 
-    # TODO: Lock down requests so your Slack is the only sender accepted
-    # if token is None or token != app.config['SLACK_API_TOKEN']:
-    #     abort(403)
+    # Lock down requests so your Slack is the only sender accepted
+    if settings.SLACK_TOKEN:
+        token: str = form_data.get('token', None)
+        if token is None or token != settings.SLACK_TOKEN:
+            return Response(status_code=403)
 
     user_name: str = form_data.get('user_name', None)
     text: str = form_data.get('text', None)

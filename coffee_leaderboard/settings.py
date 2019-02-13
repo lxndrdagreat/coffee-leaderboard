@@ -9,3 +9,5 @@ DATABASE_USER = config('DATABASE_USER', default=None)
 DATABASE_PASSWORD = config('DATABASE_PASSWORD', default=None)
 
 STATIC_FILES_PATH = config('STATIC_FILES_PATH', default='coffee_leaderboard/static')
+
+SLACK_TOKEN = config('SLACK_TOKEN', default=None)

@@ -7,14 +7,20 @@ In Slack, when someone starts a message with the coffee emoji (`:coffee:`),
 Slack sends the message on to the server which records the user. The records
 are viewable via a leaderboard on the site's primary page.
 
+**Warning!** _2.0 is a rewrite and has breaking changes, including the switch
+to a different database (Postgres from MongoDB), ORM (switching to
+Tortoise-ORM) and using a different framework (Starlette from Flask)._
+
 ## Installation
 
 ### Requirements
 
 - Python 3.6+
-- Postgres or SQLite3 with required async drivers
 - [Starlette ASGI framework](https://github.com/encode/starlette)
-- pygal
+- [Tortoise-ORM](https://tortoise-orm.readthedocs.io/en/latest/index.html)
+- Postgres or SQLite asyncio driver
+  - asyncpg for Postrgres
+  - aiosqlite for SQLite
 
 ### Slack Setup
 

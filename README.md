@@ -40,3 +40,4 @@ the "+XP" version. These will be reintroduced as time allows.
 -[ ] User profile pages
 -[ ] User experience gain
 -[ ] Leaderboard weekday averages chart
+-[ ] Private leaderboard (require some sort of log in, maybe directly via Slack)

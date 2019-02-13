@@ -1,10 +1,11 @@
 from tortoise import Tortoise
 from coffee_leaderboard.database.models import CoffeeEntry, UserProfile
+from coffee_leaderboard import settings
 
 
 async def init_db(generate_schemas: bool = False):
     await Tortoise.init(
-        db_url='sqlite://db.sqlite3',
+        db_url=settings.DATABASE_URL,
         modules={
             'models': ['coffee_leaderboard.database.models']
         }

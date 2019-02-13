@@ -64,8 +64,8 @@ target/
 # JetBrains
 .idea/
 
-# config.py should not be included
-config.py
+# .env configuration should not be included
+.env
 
 # sqlite dev database
 *.sqlite3

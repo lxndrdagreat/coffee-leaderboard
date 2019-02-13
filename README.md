@@ -13,7 +13,7 @@ are viewable via a leaderboard on the site's primary page.
 
 - Python 3.6+
 - Postgres or SQLite3 with required async drivers
-- Starlette
+- [Starlette ASGI framework](https://github.com/encode/starlette)
 - pygal
 
 ### Slack Setup

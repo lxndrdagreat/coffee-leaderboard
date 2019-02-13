@@ -12,9 +12,18 @@ body{
 	background-color: rgba(155,140,125,1);
 }
 
+a {
+    color: #ffffff;
+}
+
 h2 {
 	text-align: center;
 	margin: 0;
+}
+
+footer {
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 .leaderboard__row {

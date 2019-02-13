@@ -11,8 +11,8 @@
 		<h3 class="leaderboard__title">Today</h3>
 		{% for entry in entries_today %}
 			<div class="leaderboard__row">
-				<span class="number">{{entry.total}}</span>
-				<span class="user">{{entry.user}}</span>
+				<span class="number">{{ entry.total }}</span>
+				<span class="user">{{ entry.user }}</span>
 			</div>
 		{% endfor %}
 	</div>
@@ -33,14 +33,14 @@
 			<div class="leaderboard__row">
 				<span class="number">{{stat.total}}</span>
 				<span class="user">{{stat.user}}</span>
-				<a class="profile-link" href="/profile/{{stat.user}}">profile</a>		
+				{#<a class="profile-link" href="/profile/{{stat.user}}">profile</a>#}
 			</div>
 		{% endfor %}
 	</div>
 
-	<div class="leaderboard__section">
+	{#<div class="leaderboard__section">
 		<h3 class="leaderboard__title">Average Coffee Drunk by Weekday</h3>
 		{{ average_chart|safe }}
-	</div>
+	</div>#}
 </body>
 </html>

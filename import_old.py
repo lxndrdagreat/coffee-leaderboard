@@ -3,7 +3,7 @@
 from coffee_leaderboard.database import init_db
 from coffee_leaderboard.database.models import CoffeeEntry, UserProfile
 from tortoise import run_async
-from tortoise.exceptions import IntegrityError
+from tortoise.exceptions import IntegrityError, DoesNotExist
 import json
 import datetime
 import aiofiles
@@ -11,11 +11,14 @@ import aiofiles
 
 async def make_user(data):
 
-    existing = await UserProfile.get(username=data['username'])
+    try:
+        existing = await UserProfile.get(username=data['username'])
 
-    if existing:
-        print(f'User with username "{data["username"]}" already exists. Skipping.')
-        return
+        if existing:
+            print(f'User with username "{data["username"]}" already exists. Skipping.')
+            return
+    except DoesNotExist:
+        pass
 
     try:
         user = UserProfile(username=data['username'],
@@ -31,14 +34,19 @@ async def import_users():
     profiles = []
     async with aiofiles.open('profiles.json', mode='r') as users_file:
         async for line in users_file:
-            profiles.append(json.loads(line.strip()))
+            await make_user(json.loads(line.strip()))
 
-    [await make_user(profile) for profile in profiles]
+    # [await make_user(profile) for profile in profiles]
 
 
 async def make_entry(data):
     # find associated user
-    user = await UserProfile.get(username=data['user'])
+    try:
+        user = await UserProfile.get(username=data['user'])
+    except DoesNotExist:
+        print(f'Cannot create entry for non-existing user "{data["user"]}".')
+        return
+
     if not user:
         print(f'Cannot create entry for non-existing user "{data["user"]}".')
         return
@@ -64,9 +72,11 @@ async def import_old_data():
     await init_db()
 
     # create users
+    print('IMPORTING USERS')
     await import_users()
 
     # create entries, connecting them to users
+    print('IMPORTING ENTRIES')
     await import_entries()
 
 

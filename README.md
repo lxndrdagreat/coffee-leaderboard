@@ -35,9 +35,9 @@ _Coming Soon_
 The 2.0 rebuild is currently missing some of the features that existed with
 the "+XP" version. These will be reintroduced as time allows.
 
--[x] Basic leaderboard tracking of coffee drinkage
--[ ] Installation documentation
--[ ] User profile pages
--[ ] User experience gain
--[ ] Leaderboard weekday averages chart
--[ ] Private leaderboard (require some sort of log in, maybe directly via Slack)
+- [x] Basic leaderboard tracking of coffee drinkage
+- [ ] Installation documentation
+- [ ] User profile pages
+- [ ] User experience gain
+- [ ] Leaderboard weekday averages chart
+- [ ] Private leaderboard (require some sort of log in, maybe directly via Slack)

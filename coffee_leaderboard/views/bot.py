@@ -20,9 +20,23 @@ async def parse_slack_signature(request: Request) -> str:
     return f'v0={hashed}'
 
 
-@app.route('/auth', methods=['POST'])
+@app.route('/auth/request', methods=['POST'])
 async def authenticate_app(request: Request):
-    return JSONResponse(content={})
+    form = await request.form()
+
+    token = form.get('token')
+    if token != settings.SLACK_TOKEN:
+        return JSONResponse(status_code=403)
+
+    # get user_name/userid
+
+    # create an auth token for that user
+
+    # store token in db
+
+    # DM that user with the token
+
+    return JSONResponse(status_code=200)
 
 
 @app.route('/action-event', methods=['POST'])

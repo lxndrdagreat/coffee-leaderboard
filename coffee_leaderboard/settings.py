@@ -11,3 +11,8 @@ DATABASE_PASSWORD = config('DATABASE_PASSWORD', default=None)
 STATIC_FILES_PATH = config('STATIC_FILES_PATH', default='coffee_leaderboard/static')
 
 SLACK_TOKEN = config('SLACK_TOKEN', default=None)
+SLACK_CLIENT_ID = config('SLACK_CLIENT_ID', default=None)
+SLACK_CLIENT_SECRET = config('SLACK_CLIENT_SECRET', default=None)
+SLACK_SIGNING_SECRET = config('SLACK_SIGNING_SECRET', default=None)
+
+APP_TOKEN_PEPPER = config('TOKEN_PEPPER', default=None)

@@ -17,3 +17,12 @@ class CoffeeEntry(Model):
     channel_id = fields.CharField(max_length=255)
     channel_name = fields.CharField(max_length=255)
     date = fields.BigIntField()
+
+
+class UserAppToken(Model):
+    user = fields.ForeignKeyField('models.UserProfile', on_delete=fields.CASCADE)
+    # this is the token that the user copies/pastes
+    auth_token = fields.CharField(max_length=200, unique=True)
+
+    # this is the token that the app actually makes requests with
+    app_token = fields.CharField(max_length=200, unique=True, null=True)

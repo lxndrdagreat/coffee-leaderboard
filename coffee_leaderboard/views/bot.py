@@ -4,14 +4,16 @@ from starlette.responses import JSONResponse
 from tortoise.exceptions import DoesNotExist
 from coffee_leaderboard.database.models import CoffeeEntry, UserProfile, UserAppToken
 from coffee_leaderboard import settings
+from coffee_leaderboard.services import create_log_entry
 import typing
 import hashlib
 import hmac
 import base64
 import datetime
+import requests
 
 
-app = Starlette(template_directory='coffee_leaderboard/templates')
+app = Starlette()
 
 
 async def parse_slack_signature(request: Request) -> str:
@@ -79,7 +81,7 @@ async def connect_app(request: Request):
 
     # look up the model
     try:
-        user_app_auth: UserAppToken = await UserAppToken.get(auth_token=payload['token']).prefetch_related('UserProfile')
+        user_app_auth: UserAppToken = await UserAppToken.get(auth_token=payload['token']).prefetch_related('user')
 
         # create token for app
         app_token = generate_app_auth_token(user_app_auth.user.username)
@@ -106,16 +108,50 @@ async def log_from_app(request: Request):
     # look up token
     if 'token' not in payload:
         return JSONResponse(status_code=403)
+    if 'message' not in payload:
+        return JSONResponse(status_code=415)
     try:
-        user_app_auth = UserAppToken.get(app_token=payload['token'])
+        user_app_auth: UserAppToken = await UserAppToken.get(app_token=payload['token']).prefetch_related('user')
     except DoesNotExist:
         return JSONResponse(status_code=403)
 
     # get user for token
+    user: UserProfile = user_app_auth.user
     
     # log coffee
+    await create_log_entry(
+        user,
+        payload['message']
+    )
 
     # alert Slack coffee channel
+    if settings.SLACK_WEBHOOK_URL:
+        # use incoming webhook api to have the bot send a message
+        message = f'{user.username} had some :coffee:.'
+
+        split_text = payload['message'].split(' ')
+        index = None
+
+        if "--yesterday" in split_text:
+            index = split_text.index('--yesterday')
+        elif '-y' in split_text:
+            index = split_text.index('-y')
+
+        if index is not None:
+            try:
+                offset = int(split_text[index + 1])
+            except (IndexError, ValueError):
+                offset = 1
+            if offset == 1:
+                message = f'{user.username} had some :coffee: yesterday.'
+            else:
+                message = f'{user.username} had some :coffee: {offset} days ago.'
+
+        r = requests.post(settings.SLACK_WEBHOOK_URL, json={
+            'text': message
+        })
+        if r.status_code != 200:
+            print('ERROR SENDING MESSAGE TO SLACK: ', r.text)
 
     return JSONResponse(status_code=200)
 

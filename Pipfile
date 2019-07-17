@@ -10,6 +10,7 @@ aiofiles = "*"
 "jinja2" = "*"
 tortoise-orm = "*"
 aiosqlite = "*"
+requests = "*"
 
 [dev-packages]
 

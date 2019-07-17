@@ -5,9 +5,11 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, Response
 from coffee_leaderboard.database.models import CoffeeEntry, UserProfile
 from coffee_leaderboard import settings
+from coffee_leaderboard.services import create_log_entry
+from coffee_leaderboard.templating import templates
 
 
-app = Starlette(template_directory='coffee_leaderboard/templates')
+app = Starlette()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -34,28 +36,7 @@ async def leaderboard(request: Request):
         # get or create user
         user, newly_created_user = await UserProfile.get_or_create(username=user_name)
 
-        entry = CoffeeEntry(user=user,
-                            text=text,
-                            channel_id=channel_id,
-                            channel_name=channel_name,
-                            date=int(datetime.datetime.utcnow().timestamp() * 1000))
-
-        split_text = text.split(' ')
-        index = None
-
-        if "--yesterday" in split_text:
-            index = split_text.index('--yesterday')
-        elif '-y' in split_text:
-            index = split_text.index('-y')
-
-        if index is not None:
-            try:
-                offset = int(split_text[index + 1])
-            except (IndexError, ValueError):
-                offset = 1
-            entry.date = int((datetime.datetime.utcnow() - datetime.timedelta(days=offset)).timestamp() * 1000)
-
-        await entry.save()
+        await create_log_entry(user, text, channel_id, channel_name)
 
         return Response(status_code=200)
     
@@ -106,10 +87,12 @@ async def leaderboard(request: Request):
         for item in temp:
             leaderboard_all_time.append({'user': item[0], 'total': item[1]})
 
-        # render template
-        template = app.get_template('leaderboard/index.html')
-        content = template.render(request=request,
-                                  entries_today=leaderboard_today,
-                                  entries_total=leaderboard_all_time,
-                                  entries_week=leaderboard_week)
-        return HTMLResponse(content)
+        return templates.TemplateResponse(
+            'leaderboard/index.html',
+            {
+                'request': request,
+                'entries_today': leaderboard_today,
+                'entries_total': leaderboard_all_time,
+                'entries_week': leaderboard_week
+            }
+        )

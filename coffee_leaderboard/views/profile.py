@@ -6,9 +6,9 @@ from tortoise.exceptions import DoesNotExist
 from coffee_leaderboard.database import UserProfile, CoffeeEntry
 from coffee_leaderboard.utils import XP_TABLE, calculate_xp_history, calculate_user_level
 from coffee_leaderboard import settings
+from coffee_leaderboard.templating import templates
 
-
-app = Starlette(template_directory='coffee_leaderboard/templates')
+app = Starlette()
 
 
 # @app.route('/')
@@ -81,17 +81,19 @@ async def user_profile(request: Request, user_slug: str):
     #                        is_owner=False)
     # render template
 
-    template = app.get_template('profile/index.html')
-    content = template.render(request=request,
-                              user=user,
-                              entries=entries,
-                              day_chart=None,
-                              xp_percent=xp_percent,
-                              xp_next_level=xp_total_amount_this_level,
-                              xp_current_level=xp_progress_this_level,
-                              is_owner=False)
-
-    return HTMLResponse()
+    return templates.TemplateResponse(
+        'profile/index.html',
+        {
+            'request': request,
+            'user': user,
+            'entries': entries,
+            'day_chart': None,
+            'xp_percent': xp_percent,
+            'xp_next_level': xp_total_amount_this_level,
+            'xp_current_level': xp_progress_this_level,
+            'is_owner': False
+        }
+    )
 
 
 # @mod.route('/<user_slug>/recalc')
